@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Npcs
 {
-    public partial class DeleteTask : System.Web.UI.Page
+    public partial class ApiStatus : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -39,44 +39,48 @@ namespace Npcs
                 if (int.TryParse(IdObj.ToString(), out int taskId) &&
                     int.TryParse(userIdObj.ToString(), out int userId))
                 {
-                    try
+                    using (var context = new AppDbContext())
                     {
-                        using (var context = new AppDbContext())
+                        var task = context.Tasks.FirstOrDefault(t => t.Id == taskId && t.UserId == userId);
+                        if (task != null)
                         {
-                            var task = context.Tasks.FirstOrDefault(t => t.Id == taskId && t.UserId == userId);
-                            if (task != null)
+                            // Verifica se a tarefa já está concluída
+                            if (task.Status == TaskStatus.Completo)
                             {
-                                context.Tasks.Remove(task);
-                                context.SaveChanges();
-
-                                Response.StatusCode = 200;
-                                Response.ContentType = "application/json"; // Define o Content-Type
-                                Response.Write("{\"message\":\"Tarefa deletada com sucesso\"}");
+                                Response.StatusCode = 400;
+                                Response.ContentType = "application/json";
+                                Response.Write("{\"message\":\"A tarefa já está completa\"}");
+                                Response.End();
                             }
                             else
                             {
-                                Response.StatusCode = 404;
-                                Response.ContentType = "application/json"; // Define o Content-Type
-                                Response.Write("{\"message\":\"Tarefa não encontrada ou você não tem permissão para deletá-la\"}");
+                                // Altera o status para completo e salva
+                                task.Status = TaskStatus.Completo;
+                                task.ConclusionDate = DateTime.Now; // Define a data de conclusão
+                                context.SaveChanges();
+
+                                Response.StatusCode = 200;
+                                Response.ContentType = "application/json";
+                                Response.Write("{\"message\":\"Status da tarefa alterado para completo com sucesso\"}");
+                                Response.End();
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        // Logar o erro se necessário
-                        Response.StatusCode = 500; // Erro interno do servidor
-                        Response.ContentType = "application/json"; // Define o Content-Type
-                        Response.Write("{\"message\":\"Erro ao processar a requisição: " + ex.Message + "\"}");
+                        else
+                        {
+                            Response.StatusCode = 404;
+                            Response.ContentType = "application/json";
+                            Response.Write("{\"message\":\"Tarefa não encontrada ou você não tem permissão para alterá-la\"}");
+                            Response.End();
+                        }
                     }
                 }
                 else
                 {
                     Response.StatusCode = 400;
-                    Response.ContentType = "application/json"; // Define o Content-Type
+                    Response.ContentType = "application/json";
                     Response.Write("{\"message\":\"IDs inválidos\"}");
+                    Response.End();
                 }
-
-                Response.End(); // Finaliza a resposta
             }
         }
     }

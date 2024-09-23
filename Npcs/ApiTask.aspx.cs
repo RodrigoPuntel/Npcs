@@ -31,10 +31,11 @@ namespace Npcs
                                        .Where(t => t.UserId == userId)
                                        .Select(t => new
                                        {
+                                           t.Id,
                                            t.TaskName,
                                            t.TaskDescription,
                                            t.CreationDate,
-                                           t.Status
+                                           Status = t.Status.ToString()
                                        })
                                        .ToList();
 

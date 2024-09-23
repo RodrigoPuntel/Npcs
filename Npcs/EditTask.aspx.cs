@@ -21,7 +21,7 @@ namespace Npcs
 
                 using (var context = new AppDbContext())
                 {
-                    var task = context.Tasks.FirstOrDefault(t => t.Id == taskId && t.UserId == userId);
+                    var task = context.Tasks.FirstOrDefault(t => t.UserId == taskId && t.UserId == userId);
 
                     if (task != null)
                     {

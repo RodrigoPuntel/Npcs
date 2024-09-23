@@ -78,6 +78,7 @@
     <Content Include="AddTask.aspx" />
     <Content Include="AddUser.aspx" />
     <Content Include="ApiLogin.aspx" />
+    <Content Include="ApiStatus.aspx" />
     <Content Include="ApiTask.aspx" />
     <Content Include="DeleteTask.aspx" />
     <Content Include="EditTask.aspx" />
@@ -111,6 +112,13 @@
     </Compile>
     <Compile Include="ApiLogin.aspx.designer.cs">
       <DependentUpon>ApiLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ApiStatus.aspx.cs">
+      <DependentUpon>ApiStatus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ApiStatus.aspx.designer.cs">
+      <DependentUpon>ApiStatus.aspx</DependentUpon>
     </Compile>
     <Compile Include="ApiTask.aspx.cs">
       <DependentUpon>ApiTask.aspx</DependentUpon>
